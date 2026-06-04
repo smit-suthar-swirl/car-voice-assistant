@@ -11,8 +11,9 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm run build
-    preDeployCommand: npm run release   # pgvector ext + schema push + idempotent seed
+    # Free tier doesn't allow preDeployCommand, so run the DB release as part of
+    # the build (DATABASE_URL + GEMINI_API_KEY are available at build time).
+    buildCommand: npm run build && npm run release
     startCommand: npm run start
     healthCheckPath: /health
     envVars:

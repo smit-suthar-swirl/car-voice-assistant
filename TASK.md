@@ -11,6 +11,32 @@ the screen updates live as the agent speaks.
 
 ---
 
+## In plain words (non-technical)
+
+Imagine walking into a showroom and a friendly salesperson greets you — except
+this one lives on a screen and you talk to it like a real person.
+
+- You **tap the microphone and just speak**: "Tell me about the Honda Civic."
+- It **answers out loud** in a natural voice, and at the same time the screen
+  shows what it's talking about — the car's photo, price, and features.
+- Ask "**show me the inside**" or "**the front**" and the matching photo appears.
+- Ask "**how does it compare to the Toyota Corolla?**" and you get a clean
+  side-by-side comparison.
+- Ask "**what do people say about the speed?**" and it pulls up the most
+  relevant real customer reviews — not random ones, the ones actually about
+  speed.
+- Say "**I'd like a test drive**" and it books it for you by voice: it asks your
+  name and number, shows the nearest showrooms, lets you pick a time, confirms,
+  and saves the booking.
+- You can **interrupt it** anytime by just talking — it stops and listens, like
+  a real conversation.
+- Works on your **phone or computer**, and you can **mute** the mic whenever.
+
+In short: it's a hands-free, talk-to-it car salesperson that shows you exactly
+what it's describing as it speaks, and can complete a real booking — all by voice.
+
+---
+
 ## 1. What it does (functionality)
 
 | Capability | How it works |

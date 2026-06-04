@@ -1,57 +1,38 @@
-# Deploying to Railway
+# Deploy (free) on Render
 
-This app deploys as **one Railway web service** (Node server that serves the
-built React client + the API) plus **two Railway database services**:
-Postgres (with pgvector) and Redis.
+The repo is public at:
+**https://github.com/smit-suthar-swirl/car-voice-assistant**
 
-## What's already set up (in code)
-- `railway.json` — build (`npm run build`) + pre-deploy (`npm run release`) + start (`npm run start`)
-- `npm run build` → installs & builds the client, installs the server, generates Prisma client
-- `npm run release` → ensures pgvector extension → `prisma db push` → idempotent seed (skips if already seeded) → creates HNSW indexes
-- The server serves `client/dist` as static + SPA fallback in production
-- All config is env-driven (no secrets in code)
+It deploys as **one free web service** (Node server that serves the built React
+client + the API) plus **one free Postgres** (with pgvector). No Redis — the app
+uses an in-memory cache fallback automatically.
 
-## One-time deploy steps (need your Railway login)
+Everything is defined in `render.yaml` (Render Blueprint).
 
-```bash
-# 1. Log in (opens browser) — run this in your terminal
-railway login
+## Deploy in ~3 clicks
 
-# 2. From the project root, create a Railway project
-cd /Users/smitsuthar/swirl/gemini-voice-assistant-poc
-railway init                 # name it e.g. "car-voice-assistant"
+1. Open this link (sign in to Render with your GitHub — free, no credit card):
 
-# 3. Add the databases
-railway add --database postgres
-railway add --database redis
+   **https://render.com/deploy?repo=https://github.com/smit-suthar-swirl/car-voice-assistant**
 
-# 4. Set env vars on the web service
-railway variables --set "GEMINI_API_KEY=<your-key>"
-#   DATABASE_URL and REDIS_URL: reference the DB services in the Railway
-#   dashboard (Variables tab) →
-#     DATABASE_URL = ${{Postgres.DATABASE_URL}}
-#     REDIS_URL    = ${{Redis.REDIS_URL}}
-#   (Optional) CORS_ORIGIN is not needed — client is same-origin in prod.
+2. Render reads `render.yaml` and shows: a **web service** + a **Postgres** database.
+   It will ask for one secret env var — set:
 
-# 5. Deploy
-railway up
+   ```
+   GEMINI_API_KEY = <your Gemini API key>
+   ```
 
-# 6. Get the public URL
-railway domain
-```
+3. Click **Apply**. Render will:
+   - provision free Postgres
+   - build the client + server
+   - run pre-deploy: create pgvector extension → push schema → seed cars,
+     reviews & videos (with embeddings) → build HNSW indexes
+   - start the web service and give you a public `*.onrender.com` URL
 
-## pgvector note
-Railway's managed Postgres supports the `pgvector` extension; the `release`
-step runs `CREATE EXTENSION IF NOT EXISTS vector` automatically. If your
-Postgres image lacks it, swap the DB service to the `pgvector/pgvector:pg16`
-image (Railway → New → Docker Image) and point `DATABASE_URL` at it.
+Open that URL → pick Honda → Civic → tap the mic.
 
-## First deploy will
-1. Build client + server
-2. Create the pgvector extension
-3. Push the schema (tables + indexes)
-4. Seed brands, cars, showrooms, time slots, reviews & videos (with embeddings)
-5. Build HNSW vector indexes
-6. Start the server and serve the app at the Railway domain
-
-Re-deploys are safe: the seed is idempotent (set `FORCE_SEED=1` to re-seed).
+## Notes
+- Free web services **sleep after ~15 min idle**; the first request after that
+  has a ~30–50s cold start. Fine for a demo.
+- Free Postgres is fine for pgvector; the pre-deploy step creates the extension.
+- To redeploy after code changes: `git push` (Render auto-deploys from `master`).

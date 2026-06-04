@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id           String          @id @default(cuid())
+  name         String
+  slug         String          @unique
+  logoUrl      String?
+  primaryColor String?
+  description  String?
+  cars         Car[]
+  showrooms    ShowroomBrand[]
+  createdAt    DateTime        @default(now())
+}
+
+model Car {
+  id           String        @id @default(cuid())
+  brandId      String
+  brand        Brand         @relation(fields: [brandId], references: [id])
+  model        String
+  slug         String
+  year         Int
+  trim         String?
+  price        Float
+  imageUrl     String?
+  specs        Json
+  highlights   String[]
+  strengths    String[]
+  bestFor      String[]
+  reviews      Review[]
+  videoReviews VideoReview[]
+  testDrives   TestDrive[]
+  createdAt    DateTime      @default(now())
+
+  @@unique([brandId, slug, trim])
+}
+
+model Showroom {
+  id         String          @id @default(cuid())
+  name       String
+  city       String
+  address    String
+  phone      String
+  lat        Float
+  lng        Float
+  brands     ShowroomBrand[]
+  testDrives TestDrive[]
+  timeSlots  TimeSlot[]
+}
+
+model ShowroomBrand {
+  showroomId String
+  brandId    String
+  showroom   Showroom @relation(fields: [showroomId], references: [id])
+  brand      Brand    @relation(fields: [brandId], references: [id])
+
+  @@id([showroomId, brandId])
+}
+
+model TestDrive {
+  id         String   @id @default(cuid())
+  name       String
+  mobile     String
+  showroomId String
+  showroom   Showroom @relation(fields: [showroomId], references: [id])
+  carId      String
+  car        Car      @relation(fields: [carId], references: [id])
+  slot       DateTime
+  status     String   @default("confirmed")
+  bookedAt   DateTime @default(now())
+
+  @@index([carId])
+  @@index([showroomId])
+}
+
+model TimeSlot {
+  id         String   @id @default(cuid())
+  showroomId String
+  showroom   Showroom @relation(fields: [showroomId], references: [id])
+  slot       DateTime
+  isBooked   Boolean  @default(false)
+
+  @@unique([showroomId, slot])
+}
+
+model Review {
+  id           String                      @id @default(cuid())
+  carId        String
+  car          Car                         @relation(fields: [carId], references: [id])
+  reviewerName String
+  city         String
+  text         String
+  embedding    Unsupported("vector(1536)")?
+
+  @@index([carId])
+}
+
+model VideoReview {
+  id           String                      @id @default(cuid())
+  carId        String
+  car          Car                         @relation(fields: [carId], references: [id])
+  title        String
+  youtubeId    String
+  thumbnailUrl String
+  tags         String[]
+  summary      String
+  embedding    Unsupported("vector(1536)")?
+
+  @@index([carId])
+}

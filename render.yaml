@@ -1,0 +1,26 @@
+# Render Blueprint — one free web service + one free Postgres (with pgvector).
+# No Redis needed (the app falls back to an in-memory cache).
+databases:
+  - name: car-db
+    plan: free
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: car-voice-assistant
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm run build
+    preDeployCommand: npm run release   # pgvector ext + schema push + idempotent seed
+    startCommand: npm run start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: car-db
+          property: connectionString
+      - key: GEMINI_API_KEY
+        sync: false          # set this in the Render dashboard
+      - key: NODE_ENV
+        value: production

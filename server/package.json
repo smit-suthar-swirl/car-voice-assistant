@@ -1,0 +1,23 @@
+{
+  "name": "car-voice-assistant-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/index.js",
+    "build": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "seed": "node --env-file=.env prisma/seed.js",
+    "release": "node prisma/ensure-extension.js && prisma db push --accept-data-loss --skip-generate && node prisma/seed.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.28.0",
+    "@hono/node-server": "^1.13.9",
+    "@prisma/client": "^6.9.0",
+    "hono": "^4.7.11",
+    "ioredis": "^5.11.0",
+    "prisma": "^6.9.0"
+  }
+}

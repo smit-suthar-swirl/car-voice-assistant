@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  --brand-primary: #E40521;
+  --brand-primary-dark: #b30019;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0a0f;
+  color: #f0f0f5;
+  -webkit-font-smoothing: antialiased;
+}
